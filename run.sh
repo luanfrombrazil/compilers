@@ -12,7 +12,7 @@ javac -d out Main.java
 
 #PARA TESTES COM O SCANNER NO LUGAR DO MANIPULADOR DE ARQUIVO
 cd out
-java Main #>> ../output.txt #< ../util/input
+java Main < ../util/input #>> ../output.txt 
 cd ..
 
 echo -e "\033[1;35mEXECUÇÃO FINALIZADA. EXECUTADO VIA \033[1;32mrun.sh.\033[0m"

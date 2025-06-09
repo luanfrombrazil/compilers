@@ -12,7 +12,6 @@ ali
 além
 ambas
 ambos
-ano
 anos
 antes
 ao
@@ -44,7 +43,6 @@ bom
 bons
 breve
 cada
-caminho
 catorze
 cedo
 cento
@@ -81,7 +79,6 @@ delas
 dele
 deles
 demais
-dentro
 depois
 desde
 desligado
@@ -101,7 +98,6 @@ dezanove
 dezasseis
 dezassete
 dezoito
-dia
 diante
 direita
 dispoe
@@ -126,7 +122,6 @@ ela
 elas
 ele
 eles
-em
 embora
 enquanto
 entao
@@ -186,7 +181,6 @@ faço
 fez
 fim
 final
-foi
 fomos
 for
 fora
@@ -212,7 +206,6 @@ hajamos
 havemos
 havia
 hei
-hoje
 hora
 horas
 houve
@@ -253,7 +246,6 @@ logo
 longe
 lugar
 lá
-maior
 maioria
 maiorias
 mais
@@ -262,7 +254,6 @@ mas
 me
 mediante
 meio
-menor
 menos
 meses
 mesma
@@ -326,8 +317,6 @@ obrigado
 oitava
 oitavo
 oito
-onde
-ontem
 onze
 os
 ou
@@ -387,7 +376,6 @@ quais
 qual
 qualquer
 quando
-quanto
 quarta
 quarto
 quatro
@@ -578,3 +566,7 @@ beleza
 primeiramente
 segundamente
 mim
+passado
+passada
+arquivo
+arquivos
