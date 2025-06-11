@@ -20,6 +20,16 @@ public class TokenQueue {
         this.tail = null;
     }
 
+    public void skipQueue(String token) {
+        TokenCell newCell = new TokenCell(token);
+        if (head == null) {
+            head = tail = newCell;
+        } else {
+            newCell.next = head;
+            head = newCell;
+        }
+    }
+
     public void enqueue(String token) {
         TokenCell newCell = new TokenCell(token);
         if (tail == null) {

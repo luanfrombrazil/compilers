@@ -18,6 +18,30 @@ public class LexicalChecker {
         } catch (IOException e) {
             System.err.println("ERRO AO CARREGAR AS STOPWORDS: " + e.getMessage());
         }
+        try {
+            Files.lines(Paths.get("./util/reserveds/searchinputs")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/pathinputs")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/dateinputs")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/sizeinputs")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/extensions")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/relativedate")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/datefilter")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/sizefilter")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/pathfilter")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+            Files.lines(Paths.get("./util/reserveds/sizeunits")).map(String::toLowerCase)
+                    .forEach(RESERVADAS::add);
+        } catch (IOException e) {
+            System.err.println("ERRO AO CARREGAR AS KEYWORDS: " + e.getMessage());
+        }
     }
 
     public TokenQueue tokenizer(String linha, ArrayList<String> symbolTable) {
