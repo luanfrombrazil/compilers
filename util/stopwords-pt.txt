@@ -570,3 +570,6 @@ passado
 passada
 arquivo
 arquivos
+pesado
+pesada
+pesa
