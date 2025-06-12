@@ -12,15 +12,16 @@ import java.util.Set;
 
 public class SyntaxTree {
 
-    enum tipos {
-        EXTENSOES, DATA_RELATIVA, FILTRO_DE_DATA, FILTRO_DE_TAMANHO, FILTRO_DE_DIRETORIO, UNIDADES_TAMANHO, TAMANHO
+    enum Tipo {
+        EXTENSOES, DATA_RELATIVA, FILTRO_DE_DATA, FILTRO_DE_TAMANHO, FILTRO_DE_DIRETORIO, UNIDADES_TAMANHO, TAMANHO,
+        NOME_DOCUMENTO, DIRETORIO;
     };
 
     private static String token;
     private static boolean malformation;
 
     TreeCell root;
-    ArrayList<String> symbolTable;
+    List<Symbol> symbolTable;
 
     static final Set<String> EXTENSOES = new HashSet<>();
     static final Set<String> DATA_RELATIVA = new HashSet<>();
@@ -80,17 +81,10 @@ public class SyntaxTree {
         return true;
     }
 
-    public SyntaxTree(ArrayList<String> symbolTable) {
-        loadKeywords();
-        this.root = new TreeCell(new ArrayList<String>(), "NULL");
-        this.symbolTable = symbolTable;
-
-    }
-
     public SyntaxTree() {
         loadKeywords();
         this.root = new TreeCell(new ArrayList<String>(), "NULL");
-        this.symbolTable = new ArrayList<>();
+        this.symbolTable = new ArrayList<Symbol>();
     }
 
     public void processQueue(TokenQueue queue) {
@@ -125,7 +119,7 @@ public class SyntaxTree {
                 } else {
                     if (aux.isEmpty()) {
                         System.err.print("EXTENSÃO EXPERADA\n");
-                        boolean recebido = askFor(tipos.EXTENSOES, aux);
+                        boolean recebido = askFor(Tipo.EXTENSOES, aux);
                         if (!recebido) {
                             malformation = true;
                             break;
@@ -147,6 +141,7 @@ public class SyntaxTree {
                 busca_branch.filhos.add(new TreeCell(extensao, "EXTENSAO_DOCUMENTO"));
                 root.filhos.add(busca_branch);
                 root.tokens.add(comando);
+                this.symbolTable.add(new Symbol(nome_arquivo.toString(), Symbol.Tipo.NOME_DOCUMENTO));
 
                 if (!aux.isEmpty()) {
                     token = aux.dequeue();
@@ -160,7 +155,7 @@ public class SyntaxTree {
                         data_final.tokens.add(processaData("hoje"));
                         if (aux.isEmpty()) {
                             System.err.print("DATA EXPERADA\n");
-                            boolean recebido = askFor(tipos.DATA_RELATIVA, aux);
+                            boolean recebido = askFor(Tipo.DATA_RELATIVA, aux);
                             if (!recebido) {
                                 malformation = true;
                                 break;
@@ -193,7 +188,7 @@ public class SyntaxTree {
                         } else {
                             if (aux.isEmpty()) {
                                 System.err.print("EXTENSÃO EXPERADA\n");
-                                boolean recebido = askFor(tipos.EXTENSOES, aux);
+                                boolean recebido = askFor(Tipo.EXTENSOES, aux);
                                 if (!recebido) {
                                     malformation = true;
                                     break;
@@ -213,6 +208,7 @@ public class SyntaxTree {
                         root.tipo += "_FILTRADA";
                         this.root.filhos.add(filtro);
                         filtro.filhos.add(caminho);
+                        this.symbolTable.add(new Symbol(caminho.toString(), Symbol.Tipo.DIRETORIO));
 
                     } else if (contains(token, FILTRO_DE_TAMANHO, 1)) {
 
@@ -223,7 +219,7 @@ public class SyntaxTree {
 
                         if (aux.isEmpty()) {
                             System.err.println("VALOR NUMERICO ESPERADO\n");
-                            boolean recebido = askFor(tipos.TAMANHO, aux);
+                            boolean recebido = askFor(Tipo.TAMANHO, aux);
                             if (!recebido) {
                                 malformation = true;
                                 break;
@@ -241,7 +237,7 @@ public class SyntaxTree {
 
                         if (aux.isEmpty()) {
                             System.err.println("UNIDADE DE TAMANHO ESPERADA\n");
-                            boolean recebido = askFor(tipos.UNIDADES_TAMANHO, aux);
+                            boolean recebido = askFor(Tipo.UNIDADES_TAMANHO, aux);
                             if (!recebido) {
                                 malformation = true;
                                 break;
@@ -261,12 +257,15 @@ public class SyntaxTree {
                         this.root.filhos.add(filtro);
                         filtro.filhos.add(tamanho);
                         filtro.filhos.add(unidade);
+
+                        this.symbolTable.add(new Symbol(tamanho.toString(), Symbol.Tipo.TAMANHO));
                         break;
                     } else {
                         dunno();
                         malformation = true;
                         break;
                     }
+
                 }
 
             } else if (token.equals("qual")) {
@@ -298,7 +297,7 @@ public class SyntaxTree {
                 } else {
                     if (aux.isEmpty()) {
                         System.err.print("EXTENSÃO EXPERADA");
-                        boolean recebido = askFor(tipos.EXTENSOES, aux);
+                        boolean recebido = askFor(Tipo.EXTENSOES, aux);
                         if (!recebido) {
                             malformation = true;
                             break;
@@ -319,6 +318,8 @@ public class SyntaxTree {
                 busca_branch.filhos.add(new TreeCell(nome_arquivo, "NOME_DOCUMENTO"));
                 busca_branch.filhos.add(new TreeCell(extensao, "EXTENSAO_DOCUMENTO"));
                 root.filhos.add(busca_branch);
+                this.symbolTable.add(new Symbol(nome_arquivo.toString(), Symbol.Tipo.NOME_DOCUMENTO));
+
                 break;
             } else if (contains(token, COMANDOS_DE_DATA, 1)) {
                 this.root.tipo = "DATA_DE";
@@ -347,7 +348,7 @@ public class SyntaxTree {
                 } else {
                     if (aux.isEmpty()) {
                         System.err.print("EXTENSÃO EXPERADA");
-                        boolean recebido = askFor(tipos.EXTENSOES, aux);
+                        boolean recebido = askFor(Tipo.EXTENSOES, aux);
                         if (!recebido) {
                             malformation = true;
                             break;
@@ -368,6 +369,7 @@ public class SyntaxTree {
                 busca_branch.filhos.add(new TreeCell(nome_arquivo, "NOME_DOCUMENTO"));
                 busca_branch.filhos.add(new TreeCell(extensao, "EXTENSAO_DOCUMENTO"));
                 root.filhos.add(busca_branch);
+                this.symbolTable.add(new Symbol(nome_arquivo.toString(), Symbol.Tipo.NOME_DOCUMENTO));
                 break;
             } else if (contains(token, COMANDOS_DE_TAMANHO, 1)) {
                 this.root.tipo = "TAMANHO_DE";
@@ -396,7 +398,7 @@ public class SyntaxTree {
                 } else {
                     if (aux.isEmpty()) {
                         System.err.print("EXTENSÃO EXPERADA");
-                        boolean recebido = askFor(tipos.EXTENSOES, aux);
+                        boolean recebido = askFor(Tipo.EXTENSOES, aux);
                         if (!recebido) {
                             malformation = true;
                             break;
@@ -416,6 +418,8 @@ public class SyntaxTree {
                 busca_branch.tokens.add(comando);
                 busca_branch.filhos.add(new TreeCell(nome_arquivo, "NOME_DOCUMENTO"));
                 busca_branch.filhos.add(new TreeCell(extensao, "EXTENSAO_DOCUMENTO"));
+                this.symbolTable.add(new Symbol(nome_arquivo.toString(), Symbol.Tipo.NOME_DOCUMENTO));
+
                 root.filhos.add(busca_branch);
                 break;
             } else {
@@ -495,14 +499,14 @@ public class SyntaxTree {
             case "hoje" -> {
                 return hoje.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             }
-            case "anteontem" -> {
-                return hoje.minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            }
             case "dia" -> {
                 return hoje.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             }
             case "ontem" -> {
                 return hoje.minusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            }
+            case "anteontem" -> {
+                return hoje.minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             }
             case "semana" -> {
                 return hoje.minusDays(7).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -519,7 +523,7 @@ public class SyntaxTree {
         return "00/00/0000";
     }
 
-    public boolean askFor(tipos tipo, TokenQueue queue, int timesAsked) {
+    public boolean askFor(Tipo tipo, TokenQueue queue, int timesAsked) {
         if (timesAsked > 2) {
             return false;
         }
@@ -532,7 +536,7 @@ public class SyntaxTree {
         switch (tipo) {
             case EXTENSOES:
                 System.out.println("QUAL EXTENSÃO TEM O ARQUIVO?");
-                tempQueue = lexical.tokenizer(scs.nextLine(), this.symbolTable);
+                tempQueue = lexical.tokenizer(scs.nextLine());
                 String extensao = tempQueue.dequeue();
                 if (!contains(extensao, EXTENSOES, 0)) {
                     recebido = askFor(tipo, queue, timesAsked++);
@@ -542,7 +546,7 @@ public class SyntaxTree {
                 return recebido;
             case DATA_RELATIVA:
                 System.out.println("QUAL A DATA?");
-                tempQueue = lexical.tokenizer(scs.nextLine(), this.symbolTable);
+                tempQueue = lexical.tokenizer(scs.nextLine());
                 String data = tempQueue.dequeue();
                 if (!contains(data, DATA_RELATIVA, 0)) {
                     recebido = askFor(tipo, queue, timesAsked++);
@@ -552,7 +556,7 @@ public class SyntaxTree {
                 return recebido;
             case UNIDADES_TAMANHO:
                 System.out.println("QUAL UNIDADE DE TAMANHO? B, KB, MB, GB, TB?");
-                tempQueue = lexical.tokenizer(scs.nextLine(), this.symbolTable);
+                tempQueue = lexical.tokenizer(scs.nextLine());
                 String unidade = tempQueue.dequeue();
                 if (!contains(unidade, UNIDADES_TAMANHO, 0)) {
                     recebido = askFor(tipo, queue, timesAsked++);
@@ -562,7 +566,7 @@ public class SyntaxTree {
                 return recebido;
             case TAMANHO:
                 System.out.println("QUAL TAMANHO DO ARQUIVO?");
-                tempQueue = lexical.tokenizer(scs.nextLine(), this.symbolTable);
+                tempQueue = lexical.tokenizer(scs.nextLine());
                 String tamanho = tempQueue.dequeue();
                 if (!tamanho.matches("\\d+")) {
                     recebido = askFor(tipo, queue, timesAsked++);
@@ -575,7 +579,7 @@ public class SyntaxTree {
         }
     }
 
-    public boolean askFor(tipos tipo, TokenQueue queue) {
+    public boolean askFor(Tipo tipo, TokenQueue queue) {
         return askFor(tipo, queue, 1);
     }
 
@@ -586,5 +590,24 @@ public class SyntaxTree {
     @Override
     public String toString() {
         return this.root.toString();
+    }
+
+    private class Symbol {
+        enum Tipo {
+            NOME_DOCUMENTO, DIRETORIO, TAMANHO;
+        };
+
+        String token;
+        Tipo tipo;
+
+        public Symbol(String token, Symbol.Tipo tipo) {
+            this.tipo = tipo;
+            this.token = token;
+        }
+        @Override
+        public String toString() {
+            return token+" : <"+tipo+">";
+        }
+        // int regra_usada;
     }
 }

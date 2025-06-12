@@ -44,7 +44,7 @@ public class LexicalChecker {
         }
     }
 
-    public TokenQueue tokenizer(String linha, ArrayList<String> symbolTable) {
+    public TokenQueue tokenizer(String linha) {
         boolean stringIncoming = false;
         TokenQueue auxTokenQueue = new TokenQueue();
         StringBuilder sb = new StringBuilder();
@@ -108,10 +108,7 @@ public class LexicalChecker {
         while (!auxTokenQueue.isEmpty()) {
             token = auxTokenQueue.dequeue().toLowerCase();
             tokenQueue.enqueue(token);
-
-            if (!contains(token, symbolTable) && token.matches(".*[a-zA-Z].*") && !stringIncoming) {
-                symbolTable.add(token);
-            } else if (isQuote(token.charAt(0))) {
+            if (isQuote(token.charAt(0))) {
                 stringIncoming = !stringIncoming;
             }
         }
